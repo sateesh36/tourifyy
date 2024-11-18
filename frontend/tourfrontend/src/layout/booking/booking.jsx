@@ -7,6 +7,7 @@ import { BookingForm } from "./bookingForm";
 import { Card, Row, Col, Button } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { RelatedDestinations } from "./RelatedDestination";
 
 export const Booking = () => {
   const [detailItem, setDetailItem] = useState([]);
@@ -73,7 +74,7 @@ export const Booking = () => {
     }
   };
 
-  //used in submit and create reviews//
+  //used in submit and create reviews// Algorithm
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -100,7 +101,7 @@ export const Booking = () => {
     setRating(value);
   };
 
-  //used to render star to the guven value such as 1 to 5//
+  //used to render star to the guven value such as 1 to 5// Algorithm
   const renderStars = (ratingValue) => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
@@ -294,6 +295,8 @@ export const Booking = () => {
               </Col>
             </Col>
           </Row>
+          <RelatedDestinations />
+
         </div>
       </section>
     </>
