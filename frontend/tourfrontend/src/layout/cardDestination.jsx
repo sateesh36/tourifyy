@@ -42,12 +42,13 @@ export const CardDestinarion = () => {
     getCategory();
   }, []);
 
-  //for getting seperate item with seperate category//
+  // //for getting seperate item with seperate category//
 
   const getItemCategory = async (id) => {
     try {
       const res = await api.get(`/category/${id}`);
       setListItem(res.data.data);
+      // console.warn("asdfsdf", res.data.data);
     } catch (err) {
       console.log(err);
     }

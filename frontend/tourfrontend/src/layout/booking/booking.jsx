@@ -26,6 +26,7 @@ export const Booking = () => {
     };
     fetchDetails();
   }, []);
+
   console.log(detailItem);
   // debugger;
   //this is for the booking formm//
@@ -295,7 +296,7 @@ export const Booking = () => {
               </Col>
             </Col>
           </Row>
-          <RelatedDestinations />
+          <RelatedDestinations currentTour={detailItem} />
 
         </div>
       </section>

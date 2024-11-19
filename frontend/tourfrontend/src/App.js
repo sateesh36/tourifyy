@@ -14,6 +14,8 @@ import { Payment } from "./layout/booking/payment";
 import { ChatBot } from "./layout/chatBot/chatBot";
 import { ChangePassword } from "./layout/auth/changePassword";
 import { Navbar } from "./layout/components/navbar";
+import { ForgotPassword } from "./layout/auth/ForgetPassword";
+import { ResetPassword } from "./layout/auth/ResetPassword";
 
 // import "../public/css/style.css";
 function Navigation() {
@@ -22,6 +24,8 @@ function Navigation() {
       <BrowserRouter>
         <Routes>
           <Route exact path="/login" Component={Login} />
+          <Route exact path="/forgot" Component={ForgotPassword} />
+          <Route exact path="/reset-password" Component={ResetPassword} />
           <Route exact path="/" Component={Home} />
           <Route exact path="/register" Component={Register} />
           <Route exact path="/contact" Component={ContactUs} />

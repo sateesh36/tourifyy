@@ -28,6 +28,7 @@ const ReviewRoute = require("./routes/ratingRoute");
 const dayRoute = require("./routes/daysRoute");
 const contactRoute = require("./routes/contactUsRoutes");
 const chatBot = require("./routes/chatBotRoutes");
+const recommendationRoute = require("./routes/recommendationRoutes")
 
 //for recommended algorithm//
 const recommended = require("./routes/tourRoute");

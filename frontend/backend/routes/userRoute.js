@@ -19,6 +19,7 @@ const { emailVerification } = require("../controller/mailVerification");
 
 const router = express.Router();
 const multer = require("multer");
+const { forgotPassword, verifyOTPandResetPassword } = require("../controller/forgotController");
 const upload = multer({ dest: "uploads/" });
 
 // router.route("/register").post(upload.single("avatar"), registerUser);
@@ -52,6 +53,9 @@ router
 
 //for changing password//
 router.route("/changePassword/:id").put(changePassword);
+//forgot password
+router.route("/forgot").post(forgotPassword)
+router.route("/reset").post(verifyOTPandResetPassword)
 
 //for search history//
 // router
