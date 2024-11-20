@@ -50,6 +50,10 @@ const tourSchema = new mongoose.Schema({
       ref: "Day",
     },
   ],
+  bookings: {
+    type: Number,
+    default: 0, // Initialize with 0
+  },
 
   reviews: [
     {

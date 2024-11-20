@@ -42,6 +42,11 @@ const bookingSchema = new mongoose.Schema({
     type: Number,
     require: true,
   },
+  tour: {
+    type: mongoose.Types.ObjectId,
+    ref: "Tour",
+    required: true,
+  },
 
   bookAt: {
     type: Date,

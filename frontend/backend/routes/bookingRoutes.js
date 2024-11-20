@@ -8,6 +8,8 @@ const {
   getBookingHistory,
   updateBooking,
   approvePayment,
+  getMostBookedDestinations,
+  getMostBookedTours,
 } = require("../controller/bookingController");
 const { isAuthenticated, authorizedRole } = require("../middleware/auth");
 
@@ -37,5 +39,8 @@ router
 router
   .route("/payment/:id")
   .put(isAuthenticated, authorizedRole("admin"), approvePayment);
+
+  router.route("/mostBooked").get(getMostBookedDestinations);
+  router.route("/most-booked").get(getMostBookedTours);
 
 module.exports = router;

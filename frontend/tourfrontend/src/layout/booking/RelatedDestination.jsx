@@ -82,6 +82,109 @@
 //   );
 // };
 
+// import React, { useEffect, useState } from "react";
+// import { Link } from "react-router-dom";
+// import api from "../../api";
+
+// export const RelatedDestinations = ({ currentTour }) => {
+//   const [listItem, setListItem] = useState([]);
+//   const [randomCards, setRandomCards] = useState([]);
+
+//   // Fetch all destinations
+//   const fetchDestination = async () => {
+//     try {
+//       const res = await api.get("/tour/");
+//       if (res) {
+//         setListItem(res.data.data);
+//       }
+//     } catch (error) {
+//       console.error("Error fetching destinations:", error);
+//     }
+//   };
+
+//   // Get 1 to 3 random cards with unique titles and categories
+//   const getRandomCards = () => {
+//     if (listItem.length > 0) {
+//       // Filter out the current tour by title and category
+//       const filtered = listItem.filter(
+//         (tour) =>
+//           tour._id !== currentTour._id && // Exclude the current tour
+//           tour.title !== currentTour.title // Exclude the same title
+//       );
+
+//       // Shuffle and pick up to 3 random items from different categories
+//       const shuffled = [...filtered].sort(() => 0.5 - Math.random());
+//       const selected = shuffled.slice(0, Math.min(3, shuffled.length)); // Ensure no more than 3 items
+//       setRandomCards(selected);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchDestination();
+//   }, []);
+
+//   useEffect(() => {
+//     if (listItem.length > 0) {
+//       getRandomCards();
+//     }
+//   }, [listItem, currentTour]);
+
+//   return (
+//     <div className="untree_co-section">
+//       <div className="container">
+//         <h4 className="mb-4 text-center">Related Destinations</h4>
+//         <div className="row">
+//           {randomCards.length > 0 ? (
+//             randomCards.map((item) => (
+//               <div
+//                 className="col-6 col-sm-6 col-md-6 col-lg-3 mb-4"
+//                 key={item._id}
+//               >
+//                 <div className="media-1">
+//                   <div style={{ height: "30%" }}>
+//                     <img
+//                       src={item.photo?.url || "https://via.placeholder.com/150"}
+//                       alt={item.title}
+//                       className="img-fluid"
+//                     />
+//                   </div>
+//                   <span className="d-flex align-items-center loc mb-2">
+//                     <span className="icon-room mr-3"></span>
+//                     <span>{item.city}</span>
+//                   </span>
+//                   <div className="d-flex align-items-center">
+//                     <div>
+//                       <h3>
+//                         <a>{item.title}</a>
+//                       </h3>
+//                       <div className="price ml-auto">
+//                         <span>RS {item.price}</span>
+//                         <Link to={`/booking/${item._id}`}>
+//                           <button
+//                             className="btn btn-primary rounded custom-small-btn ml-5"
+//                             style={{
+//                               fontSize: "12px",
+//                               padding: "4px 8px",
+//                             }}
+//                           >
+//                             Read More
+//                           </button>
+//                         </Link>
+//                       </div>
+//                     </div>
+//                   </div>
+//                 </div>
+//               </div>
+//             ))
+//           ) : (
+//             <p className="text-center">No destinations available</p>
+//           )}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../../api";
@@ -89,6 +192,7 @@ import api from "../../api";
 export const RelatedDestinations = ({ currentTour }) => {
   const [listItem, setListItem] = useState([]);
   const [randomCards, setRandomCards] = useState([]);
+  const [mostBooked, setMostBooked] = useState([]);
 
   // Fetch all destinations
   const fetchDestination = async () => {
@@ -102,25 +206,36 @@ export const RelatedDestinations = ({ currentTour }) => {
     }
   };
 
+  // Fetch most-booked tours
+  const fetchMostBookedTours = async () => {
+    try {
+      const res = await api.get("/booking/most-booked");
+      if (res) {
+        setMostBooked(res.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching most booked tours:", error);
+    }
+  };
+
   // Get 1 to 3 random cards with unique titles and categories
   const getRandomCards = () => {
     if (listItem.length > 0) {
-      // Filter out the current tour by title and category
       const filtered = listItem.filter(
         (tour) =>
           tour._id !== currentTour._id && // Exclude the current tour
           tour.title !== currentTour.title // Exclude the same title
       );
 
-      // Shuffle and pick up to 3 random items from different categories
       const shuffled = [...filtered].sort(() => 0.5 - Math.random());
-      const selected = shuffled.slice(0, Math.min(3, shuffled.length)); // Ensure no more than 3 items
+      const selected = shuffled.slice(0, Math.min(3, shuffled.length));
       setRandomCards(selected);
     }
   };
 
   useEffect(() => {
     fetchDestination();
+    fetchMostBookedTours();
   }, []);
 
   useEffect(() => {
@@ -136,10 +251,7 @@ export const RelatedDestinations = ({ currentTour }) => {
         <div className="row">
           {randomCards.length > 0 ? (
             randomCards.map((item) => (
-              <div
-                className="col-6 col-sm-6 col-md-6 col-lg-3 mb-4"
-                key={item._id}
-              >
+              <div className="col-6 col-sm-6 col-md-6 col-lg-3 mb-4" key={item._id}>
                 <div className="media-1">
                   <div style={{ height: "30%" }}>
                     <img
@@ -178,6 +290,52 @@ export const RelatedDestinations = ({ currentTour }) => {
             ))
           ) : (
             <p className="text-center">No destinations available</p>
+          )}
+        </div>
+
+        <h4 className="mb-4 text-center">Most Booked Tours</h4>
+        <div className="row">
+          {mostBooked.length > 0 ? (
+            mostBooked.map((item) => (
+              <div className="col-6 col-sm-6 col-md-6 col-lg-3 mb-4" key={item._id}>
+                <div className="media-1">
+                  <div style={{ height: "30%" }}>
+                    <img
+                      src={item.photo?.url || "https://via.placeholder.com/150"}
+                      alt={item.title}
+                      className="img-fluid"
+                    />
+                  </div>
+                  <span className="d-flex align-items-center loc mb-2">
+                    <span className="icon-room mr-3"></span>
+                    <span>{item.city}</span>
+                  </span>
+                  <div className="d-flex align-items-center">
+                    <div>
+                      <h3>
+                        <a>{item.title}</a>
+                      </h3>
+                      <div className="price ml-auto">
+                        <span>RS {item.price}</span>
+                        <Link to={`/booking/${item._id}`}>
+                          <button
+                            className="btn btn-primary rounded custom-small-btn ml-5"
+                            style={{
+                              fontSize: "12px",
+                              padding: "4px 8px",
+                            }}
+                          >
+                            Read More
+                          </button>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-center">No most booked tours available</p>
           )}
         </div>
       </div>

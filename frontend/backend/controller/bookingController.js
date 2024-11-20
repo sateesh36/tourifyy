@@ -1,6 +1,7 @@
 const Booking = require("../models/bookingModel");
 const User = require("../models/userModel");
 const mailVerification = require("./mailVerification");
+const Tour= require("../models/tourModel")
 
 // Create a new booking
 exports.createBooking = async (req, res) => {
@@ -218,3 +219,104 @@ exports.updateBooking = async (req, res) => {
     });
   }
 };
+
+
+exports.getMostBookedDestinations = async (req, res) => {
+  try {
+    const mostBooked = await Booking.aggregate([
+      { $group: { _id: "$destination", count: { $sum: 1 } } }, // Group by destination and count bookings
+      { $sort: { count: -1 } }, // Sort by count in descending order
+      { $limit: 5 }, // Limit to top 5 most booked destinations
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      message: "Most booked destinations fetched successfully",
+      data: mostBooked,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+
+// Get most-booked tours
+// Get most-booked tours with full tour data for the client side
+// Get most-booked tours with full tour data for the client side
+exports.getMostBookedTours = async (req, res) => {
+  try {
+    // Aggregation pipeline to group bookings by tour and count them
+    const mostBookedTours = await Booking.aggregate([
+      {
+        $group: {
+          _id: "$tour", // Group by tour ID
+          bookingCount: { $sum: 1 }, // Count the number of bookings for each tour
+        },
+      },
+      {
+        $sort: { bookingCount: -1 }, // Sort by booking count in descending order
+      },
+      {
+        $limit: 5, // Limit to the top 5 most booked tours
+      },
+    ]);
+
+    // Populate the tour details along with category and other relevant information
+    const populatedTours = await Promise.all(
+      mostBookedTours.map(async (item) => {
+        // Find the tour by ID and populate necessary fields
+        const tour = await Tour.findById(item._id)
+          .populate("category", "name") // Populate the category name (or any other fields you need)
+          .populate("days", "title description"); // Populate the days (if relevant)
+
+        // Check if the tour exists
+        if (!tour) {
+          return null; // If tour does not exist, return null
+        }
+
+        return {
+          tour,
+          bookingCount: item.bookingCount,
+        };
+      })
+    );
+
+    // Filter out null entries (in case some tours were not found)
+    const validTours = populatedTours.filter((item) => item !== null);
+
+    if (validTours.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No most booked tours available",
+      });
+    }
+
+    // Return the tour data for the client side
+    res.status(200).json({
+      success: true,
+      message: "Most booked tours found",
+      data: validTours.map((item) => ({
+        title: item.tour.title,
+        city: item.tour.city,
+        price: item.tour.price,
+        maxGroupSize: item.tour.maxGroupSize,
+        category: item.tour.category ? item.tour.category.name : "N/A",
+        bookingCount: item.bookingCount,
+        photo: item.tour.photo ? item.tour.photo.url : "default.png",
+        days: item.tour.days,
+      })),
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching most booked tours",
+      error: error.message,
+    });
+  }
+};
+
+

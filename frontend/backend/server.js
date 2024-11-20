@@ -43,6 +43,7 @@ cloudinary.config({
 
 // Import recommendation route
 const recommendationRoute = require("../backend/routes/recommendationRoutes");
+const router = require("./routes/bookingRoutes");
 
 // Use body parser to handle JSON requests
 app.use(bodyParser.json());
@@ -52,6 +53,7 @@ connectDB();
 
 // Use the recommendation route
 app.use("/api", recommendationRoute);
+app.use("/api/booking",router)
 
 // Start the server
 const PORT = process.env.PORT || 5000;
